@@ -17,7 +17,17 @@
             --radius: 15px;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        /* 憲法: 15px角丸 / iOS対策 / テキスト選択禁止（コピーと展開の邪魔をさせない） */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; padding: 0; 
+            -webkit-user-select: none; 
+            user-select: none; 
+        }
+
+        /* 入力欄だけはテキスト操作を許可 */
+        textarea { -webkit-user-select: text; user-select: text; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -116,7 +126,6 @@
         }
         .action-btn:active { transform: scale(0.98); }
 
-        /* リストスクロール窓 */
         #clip-list { 
             display: flex; 
             flex-direction: column; 
@@ -136,11 +145,11 @@
             border-radius: var(--radius);
             padding: 5px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.1s ease;
             position: relative;
         }
         
-        /* タップ時の発光 */
+        /* タップ時の即座な発光（コピー完了） */
         .clip-item.copied-flash { 
             background: var(--main) !important; 
             border-color: var(--main);
@@ -155,13 +164,12 @@
             font-weight: 700;
             line-height: 1.4;
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* 基本2行表示 */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             word-break: break-all;
         }
 
-        /* 全展開時のスタイル */
         .clip-item.expanded .clip-text {
             -webkit-line-clamp: unset;
             display: block;
@@ -227,7 +235,7 @@
         <h1>Quick Clip</h1>
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
-    <p class="subtitle">Tap to copy / Toggle expand.</p>
+    <p class="subtitle">Tap to copy. Long press to expand.</p>
 
     <div class="input-card">
         <label class="label">New Snippet</label>
@@ -269,6 +277,7 @@
     const clrBtn = document.getElementById('clrBtn');
     const exportBtn = document.getElementById('exportBtn');
     let clips = JSON.parse(localStorage.getItem('fridge_clips') || '[]');
+    let longPressTimer;
 
     function toggleClr() {
         clrBtn.style.display = clipInput.value.length > 0 ? 'flex' : 'none';
@@ -288,27 +297,32 @@
         clips.forEach((clip, index) => {
             const div = document.createElement('div');
             div.className = 'clip-item';
-            div.onclick = () => handleItemClick(clip, div);
+            
+            // 爆速シングルタップ（コピー）
+            div.addEventListener('click', (e) => {
+                copyClip(clip, div);
+            });
+
+            // 長押し（展開）のロジック
+            div.addEventListener('touchstart', (e) => {
+                longPressTimer = setTimeout(() => {
+                    div.classList.toggle('expanded');
+                    // 長押し成功時はクリックイベントを発火させない
+                    div.click_suppressed = true; 
+                    if (navigator.vibrate) navigator.vibrate(10);
+                }, 350);
+            }, {passive: true});
+
+            div.addEventListener('touchend', () => {
+                clearTimeout(longPressTimer);
+            });
+
             div.innerHTML = `
                 <div class="clip-text">${clip}</div>
                 <button class="delete-btn" onclick="event.stopPropagation(); deleteClip(${index})">×</button>
             `;
             list.appendChild(div);
         });
-    }
-
-    function handleItemClick(clip, element) {
-        // 全展開・折りたたみの切り替え
-        const isExpanded = element.classList.contains('expanded');
-        
-        if (!isExpanded) {
-            // 展開されていない場合はまず展開する
-            element.classList.add('expanded');
-        } else {
-            // すでに展開されている場合はコピーして閉じる
-            copyClip(clip, element);
-            element.classList.remove('expanded');
-        }
     }
 
     function addClip() {
@@ -329,12 +343,18 @@
     }
 
     async function copyClip(text, element) {
+        // 長押しイベントが直前に発生していた場合はコピーを抑制
+        if (element.click_suppressed) {
+            element.click_suppressed = false;
+            return;
+        }
+
         try {
             await navigator.clipboard.writeText(text);
             element.classList.add('copied-flash');
             setTimeout(() => {
                 element.classList.remove('copied-flash');
-            }, 250);
+            }, 150);
         } catch (err) {
             console.error('Failed to copy');
         }
