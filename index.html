@@ -79,7 +79,7 @@
 
         textarea {
             width: 100%;
-            height: 100px;
+            height: 80px;
             padding: 15px;
             padding-right: 45px;
             border: 2px solid var(--accent);
@@ -117,7 +117,17 @@
         }
         .action-btn:active { transform: scale(0.98); }
 
-        #clip-list { display: flex; flex-direction: column; gap: 10px; }
+        /* スクロール窓の設計 */
+        #clip-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+            max-height: 320px; 
+            overflow-y: auto; 
+            padding-right: 5px;
+            scrollbar-width: none; /* Firefox */
+        }
+        #clip-list::-webkit-scrollbar { display: none; /* Safari/Chrome */ }
         
         .clip-item {
             display: flex;
@@ -127,9 +137,16 @@
             border-radius: var(--radius);
             padding: 5px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.1s ease;
         }
-        .clip-item:active { transform: scale(0.98); background: #eee; }
+        
+        /* タップ時の反転フィードバック */
+        .clip-item:active, .clip-item.copied-flash { 
+            background: var(--main) !important; 
+            border-color: var(--main);
+        }
+        .clip-item:active .clip-text, .clip-item.copied-flash .clip-text { color: #fff; }
+        .clip-item:active .delete-btn, .clip-item.copied-flash .delete-btn { color: #fff; opacity: 0.5; }
         
         .clip-text {
             flex: 1;
@@ -155,9 +172,21 @@
             justify-content: center;
         }
 
-        .copied-hint { background: #333 !important; color: #fff !important; border-color: #333 !important; }
+        /* 救済措置ボタン */
+        .export-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: #999;
+            border: 1px dashed #ccc;
+            border-radius: var(--radius);
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 5px;
+        }
 
-        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
         .kofi-btn {
             background: var(--main); color: #fff; text-decoration: none;
             padding: 16px; border-radius: var(--radius); text-align: center;
@@ -189,7 +218,7 @@
         <h1>Quick Clip</h1>
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
-    <p class="subtitle">Tap to copy, long snippets saved.</p>
+    <p class="subtitle">Tap to copy. Long snippets scroll.</p>
 
     <div class="input-card">
         <label class="label">New Snippet</label>
@@ -202,6 +231,7 @@
     <button class="action-btn" onclick="addClip()">Save Snippet</button>
 
     <div id="clip-list"></div>
+    <button id="exportBtn" class="export-btn" onclick="exportAll()" style="display:none;">📥 Copy All Clips (Backup)</button>
 
     <div class="footer-btns">
         <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️ buy me a coffee</a>
@@ -228,6 +258,7 @@
 <script>
     const clipInput = document.getElementById('clipInput');
     const clrBtn = document.getElementById('clrBtn');
+    const exportBtn = document.getElementById('exportBtn');
     let clips = JSON.parse(localStorage.getItem('fridge_clips') || '[]');
 
     function toggleClr() {
@@ -243,6 +274,8 @@
     function renderClips() {
         const list = document.getElementById('clip-list');
         list.innerHTML = '';
+        exportBtn.style.display = clips.length > 0 ? 'block' : 'none';
+
         clips.forEach((clip, index) => {
             const div = document.createElement('div');
             div.className = 'clip-item';
@@ -275,17 +308,24 @@
     async function copyClip(text, element) {
         try {
             await navigator.clipboard.writeText(text);
-            element.classList.add('copied-hint');
-            const textEl = element.querySelector('.clip-text');
-            const original = textEl.innerText;
-            textEl.innerText = 'COPIED!';
+            element.classList.add('copied-flash');
             setTimeout(() => {
-                element.classList.remove('copied-hint');
-                textEl.innerText = original;
-            }, 600);
+                element.classList.remove('copied-flash');
+            }, 200);
         } catch (err) {
             console.error('Failed to copy');
         }
+    }
+
+    async function exportAll() {
+        if (clips.length === 0) return;
+        const allText = clips.join('\n---\n');
+        try {
+            await navigator.clipboard.writeText(allText);
+            const original = exportBtn.innerText;
+            exportBtn.innerText = '✅ All Clips Copied!';
+            setTimeout(() => { exportBtn.innerText = original; }, 1500);
+        } catch (err) { console.error(err); }
     }
 
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
