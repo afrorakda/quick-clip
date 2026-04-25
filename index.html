@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Quick Clip</title>
     
     <link rel="icon" href="image_33.png">
@@ -17,172 +17,228 @@
             --radius: 15px;
         }
 
+        /* 憲法: 全要素 15px角丸 / iOS Safari対策 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--main);
-            margin: 0;
             display: flex;
             justify-content: center;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px) 20px;
         }
 
         .container {
             width: 100%;
             max-width: 420px;
-            padding: 40px 20px;
-            box-sizing: border-box;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
-        .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; margin-bottom: 30px; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; margin-left: 5px; color: #666; }
+        h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1.5px; }
+
+        .hub-link {
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--main);
+            background: var(--accent);
+            padding: 8px 14px;
+            border-radius: var(--radius);
+        }
+
+        .subtitle { font-size: 0.9rem; color: #666; font-weight: 700; text-align: left; }
+
+        .input-card {
+            background: var(--input-bg);
+            padding: 18px;
+            border-radius: var(--radius);
+            border: 2px solid var(--accent);
+        }
+
+        .label {
+            font-size: 0.75rem;
+            font-weight: 900;
+            color: #666;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+        }
 
         .input-wrapper { position: relative; }
+
         textarea {
             width: 100%;
-            height: 80px;
+            height: 100px;
             padding: 15px;
+            padding-right: 45px;
             border: 2px solid var(--accent);
             border-radius: var(--radius);
-            background: var(--input-bg);
+            background: #fff;
             font-size: 1rem;
             font-weight: 600;
             color: var(--main) !important;
-            box-sizing: border-box;
             outline: none;
             resize: none;
             -webkit-appearance: none;
             -webkit-text-fill-color: var(--main) !important;
             opacity: 1 !important;
         }
-        textarea::placeholder { color: #aaa !important; -webkit-text-fill-color: #aaa !important; font-weight: 500; }
+        textarea::placeholder { color: #bbb !important; -webkit-text-fill-color: #bbb !important; opacity: 1 !important; }
 
-        .add-btn {
+        .clr-btn {
+            position: absolute; top: 10px; right: 10px; width: 28px; height: 28px;
+            background: #ccc; color: #fff; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; border: none; font-size: 16px; font-weight: bold; z-index: 5;
+        }
+
+        .action-btn {
             width: 100%;
             padding: 18px;
-            background: #333;
+            background: var(--main);
             color: #fff;
             border: none;
             border-radius: var(--radius);
             font-size: 1rem;
             font-weight: 800;
             cursor: pointer;
-            margin-bottom: 30px;
-            transition: 0.2s;
+            -webkit-text-fill-color: #fff;
         }
-        .add-btn:active { transform: scale(0.98); opacity: 0.9; }
+        .action-btn:active { transform: scale(0.98); }
 
-        #clip-list { text-align: left; list-style: none; padding: 0; margin: 0; }
+        #clip-list { display: flex; flex-direction: column; gap: 10px; }
+        
         .clip-item {
             display: flex;
             align-items: center;
             background: var(--input-bg);
             border: 2px solid var(--accent);
             border-radius: var(--radius);
-            margin-bottom: 12px;
             padding: 5px;
             cursor: pointer;
             transition: 0.2s;
         }
         .clip-item:active { transform: scale(0.98); background: #eee; }
+        
         .clip-text {
             flex: 1;
-            padding: 10px 15px;
+            padding: 12px 15px;
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 700;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .delete-btn {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: transparent;
             color: #ccc;
             border: none;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .delete-btn:hover { color: #ff4444; }
 
-        .copied-hint {
-            background: #e8f5e9 !important;
-            border-color: #a5d6a7 !important;
-        }
+        .copied-hint { background: #333 !important; color: #fff !important; border-color: #333 !important; }
 
-        footer { margin-top: 50px; font-size: 11px; color: #aaa; line-height: 1.8; }
-        .footer-btns { margin-top: 30px; }
+        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .kofi-btn {
-            display: inline-block; background: var(--main); color: #fff;
-            padding: 12px 25px; border-radius: var(--radius);
-            text-decoration: none; font-weight: bold; font-size: 14px; margin-bottom: 12px;
+            background: var(--main); color: #fff; text-decoration: none;
+            padding: 16px; border-radius: var(--radius); text-align: center;
+            font-weight: 900; font-size: 0.9rem; -webkit-text-fill-color: #fff;
         }
         .home-btn {
-            display: block; width: 60%; margin: 0 auto; background: var(--accent);
-            color: var(--main); border: none; padding: 10px;
-            border-radius: var(--radius); font-weight: 700; font-size: 13px; cursor: pointer;
+            background: var(--accent); color: var(--main); border: none;
+            padding: 12px; border-radius: var(--radius); font-weight: 800; font-size: 0.8rem; cursor: pointer;
         }
 
+        footer { text-align: center; font-size: 0.75rem; color: #999; line-height: 1.6; font-weight: 700; margin-top: 15px; }
+        footer a { color: inherit; text-decoration: underline; }
+
         #modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
         }
         .modal-content {
-            background: #fff; width: 85%; max-width: 320px; padding: 30px;
+            background: #fff; width: 90%; max-width: 340px; padding: 35px;
             border-radius: var(--radius); text-align: left; position: relative;
         }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 20px; color: #ccc; cursor: pointer; }
+        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #ccc; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Quick Clip</h1>
-    <p class="subtitle">Save snippets and copy them with a single tap.</p>
+    <header>
+        <h1>Quick Clip</h1>
+        <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
+    </header>
+    <p class="subtitle">Tap to copy, long snippets saved.</p>
 
-    <div class="input-group">
-        <label>New Snippet</label>
+    <div class="input-card">
+        <label class="label">New Snippet</label>
         <div class="input-wrapper">
-            <textarea id="clipInput" placeholder="Enter text to save..." spellcheck="false"></textarea>
+            <textarea id="clipInput" placeholder="Enter text to save..." oninput="toggleClr()"></textarea>
+            <button class="clr-btn" id="clrBtn" onclick="clearInput()">×</button>
         </div>
     </div>
 
-    <button class="add-btn" onclick="addClip()">Add Snippet</button>
+    <button class="action-btn" onclick="addClip()">Save Snippet</button>
 
     <div id="clip-list"></div>
 
     <div class="footer-btns">
-        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕ Support me on Ko-fi</a>
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️ buy me a coffee</a>
         <button class="home-btn" onclick="showModal()">Add to Home Screen</button>
     </div>
 
     <footer>
-        <div>No login / No tracking / No ads / Browser only</div>
-        <div>Privacy Policy / afrorakda © 2026</div>
+        No login / No tracking / No ads / Browser only<br>
+        <a href="https://afrorakda.com/privacy/">Privacy Policy</a> / afrorakda © 2026
     </footer>
 </div>
 
 <div id="modal" onclick="hideModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <span class="close-x" onclick="hideModal()">×</span>
-        <h3>📱 Install</h3>
-        <p>Add to your home screen.</p>
-        <p>🍏 <strong>iPhone (Safari):</strong><br>Tap Share, then Add to Home Screen.</p>
-        <p>🤖 <strong>Android (Chrome):</strong><br>Tap Menu (⋮), then Add to Home Screen.</p>
+        <h3 style="margin-bottom: 15px; font-weight: 900;">📱 Install</h3>
+        <p style="font-size: 0.9rem; line-height: 1.6; font-weight: 700;">
+            🍏 <strong>iPhone:</strong><br>Share > Add to Home Screen<br><br>
+            🤖 <strong>Android:</strong><br>Menu (⋮) > Add to Home Screen
+        </p>
     </div>
 </div>
 
 <script>
+    const clipInput = document.getElementById('clipInput');
+    const clrBtn = document.getElementById('clrBtn');
     let clips = JSON.parse(localStorage.getItem('fridge_clips') || '[]');
+
+    function toggleClr() {
+        clrBtn.style.display = clipInput.value.length > 0 ? 'flex' : 'none';
+    }
+
+    function clearInput() {
+        clipInput.value = '';
+        toggleClr();
+        clipInput.focus();
+    }
 
     function renderClips() {
         const list = document.getElementById('clip-list');
@@ -200,12 +256,12 @@
     }
 
     function addClip() {
-        const input = document.getElementById('clipInput');
-        const text = input.value.trim();
+        const text = clipInput.value.trim();
         if (text) {
             clips.unshift(text);
             localStorage.setItem('fridge_clips', JSON.stringify(clips));
-            input.value = '';
+            clipInput.value = '';
+            toggleClr();
             renderClips();
         }
     }
@@ -216,13 +272,20 @@
         renderClips();
     }
 
-    function copyClip(text, element) {
-        navigator.clipboard.writeText(text).then(() => {
+    async function copyClip(text, element) {
+        try {
+            await navigator.clipboard.writeText(text);
             element.classList.add('copied-hint');
+            const textEl = element.querySelector('.clip-text');
+            const original = textEl.innerText;
+            textEl.innerText = 'COPIED!';
             setTimeout(() => {
                 element.classList.remove('copied-hint');
-            }, 500);
-        });
+                textEl.innerText = original;
+            }, 600);
+        } catch (err) {
+            console.error('Failed to copy');
+        }
     }
 
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
