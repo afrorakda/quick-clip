@@ -17,7 +17,7 @@
             --radius: 15px;
         }
 
-        /* 憲法: 15px角丸 / iOS対策 / テキスト選択禁止（コピーと展開の邪魔をさせない） */
+        /* 憲法: 15px角丸 / iOS対策 / 全域選択禁止 */
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -26,7 +26,7 @@
             user-select: none; 
         }
 
-        /* 入力欄だけはテキスト操作を許可 */
+        /* 入力欄のみテキスト操作許可 */
         textarea { -webkit-user-select: text; user-select: text; }
 
         body {
@@ -126,11 +126,20 @@
         }
         .action-btn:active { transform: scale(0.98); }
 
+        .warning-text {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #aaa;
+            text-align: center;
+            line-height: 1.4;
+            margin-top: -5px;
+        }
+
         #clip-list { 
             display: flex; 
             flex-direction: column; 
             gap: 10px; 
-            max-height: 350px; 
+            max-height: 380px; 
             overflow-y: auto; 
             padding-right: 5px;
             scrollbar-width: none;
@@ -149,7 +158,6 @@
             position: relative;
         }
         
-        /* タップ時の即座な発光（コピー完了） */
         .clip-item.copied-flash { 
             background: var(--main) !important; 
             border-color: var(--main);
@@ -235,7 +243,7 @@
         <h1>Quick Clip</h1>
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
-    <p class="subtitle">Tap to copy. Long press to expand.</p>
+    <p class="subtitle">Tap: Copy / Long: Expand</p>
 
     <div class="input-card">
         <label class="label">New Snippet</label>
@@ -246,6 +254,7 @@
     </div>
 
     <button class="action-btn" onclick="addClip()">Save Snippet</button>
+    <div class="warning-text">Data saved locally in your browser.<br>Be careful with Incognito mode.</div>
 
     <div id="clip-list"></div>
     <button id="exportBtn" class="export-btn" onclick="exportAll()" style="display:none;">📥 Copy All Clips (Backup)</button>
@@ -298,16 +307,15 @@
             const div = document.createElement('div');
             div.className = 'clip-item';
             
-            // 爆速シングルタップ（コピー）
-            div.addEventListener('click', (e) => {
+            // 1タップコピー
+            div.addEventListener('click', () => {
                 copyClip(clip, div);
             });
 
-            // 長押し（展開）のロジック
-            div.addEventListener('touchstart', (e) => {
+            // 長押し（全展開）
+            div.addEventListener('touchstart', () => {
                 longPressTimer = setTimeout(() => {
                     div.classList.toggle('expanded');
-                    // 長押し成功時はクリックイベントを発火させない
                     div.click_suppressed = true; 
                     if (navigator.vibrate) navigator.vibrate(10);
                 }, 350);
@@ -343,12 +351,10 @@
     }
 
     async function copyClip(text, element) {
-        // 長押しイベントが直前に発生していた場合はコピーを抑制
         if (element.click_suppressed) {
             element.click_suppressed = false;
             return;
         }
-
         try {
             await navigator.clipboard.writeText(text);
             element.classList.add('copied-flash');
