@@ -17,7 +17,6 @@
             --radius: 15px;
         }
 
-        /* 憲法: 全要素 15px角丸 / iOS Safari対策 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
         body {
@@ -117,45 +116,55 @@
         }
         .action-btn:active { transform: scale(0.98); }
 
-        /* スクロール窓の設計 */
+        /* リストスクロール窓 */
         #clip-list { 
             display: flex; 
             flex-direction: column; 
             gap: 10px; 
-            max-height: 320px; 
+            max-height: 350px; 
             overflow-y: auto; 
             padding-right: 5px;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
-        #clip-list::-webkit-scrollbar { display: none; /* Safari/Chrome */ }
+        #clip-list::-webkit-scrollbar { display: none; }
         
         .clip-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             background: var(--input-bg);
             border: 2px solid var(--accent);
             border-radius: var(--radius);
             padding: 5px;
             cursor: pointer;
-            transition: all 0.1s ease;
+            transition: all 0.15s ease;
+            position: relative;
         }
         
-        /* タップ時の反転フィードバック */
-        .clip-item:active, .clip-item.copied-flash { 
+        /* タップ時の発光 */
+        .clip-item.copied-flash { 
             background: var(--main) !important; 
             border-color: var(--main);
         }
-        .clip-item:active .clip-text, .clip-item.copied-flash .clip-text { color: #fff; }
-        .clip-item:active .delete-btn, .clip-item.copied-flash .delete-btn { color: #fff; opacity: 0.5; }
+        .clip-item.copied-flash .clip-text { color: #fff; }
+        .clip-item.copied-flash .delete-btn { color: #fff; opacity: 0.5; }
         
         .clip-text {
             flex: 1;
             padding: 12px 15px;
             font-size: 0.95rem;
             font-weight: 700;
-            white-space: nowrap;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* 基本2行表示 */
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
+            word-break: break-all;
+        }
+
+        /* 全展開時のスタイル */
+        .clip-item.expanded .clip-text {
+            -webkit-line-clamp: unset;
+            display: block;
         }
 
         .delete-btn {
@@ -170,9 +179,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
-        /* 救済措置ボタン */
         .export-btn {
             width: 100%;
             padding: 10px;
@@ -218,7 +227,7 @@
         <h1>Quick Clip</h1>
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
-    <p class="subtitle">Tap to copy. Long snippets scroll.</p>
+    <p class="subtitle">Tap to copy / Toggle expand.</p>
 
     <div class="input-card">
         <label class="label">New Snippet</label>
@@ -279,13 +288,27 @@
         clips.forEach((clip, index) => {
             const div = document.createElement('div');
             div.className = 'clip-item';
-            div.onclick = () => copyClip(clip, div);
+            div.onclick = () => handleItemClick(clip, div);
             div.innerHTML = `
                 <div class="clip-text">${clip}</div>
                 <button class="delete-btn" onclick="event.stopPropagation(); deleteClip(${index})">×</button>
             `;
             list.appendChild(div);
         });
+    }
+
+    function handleItemClick(clip, element) {
+        // 全展開・折りたたみの切り替え
+        const isExpanded = element.classList.contains('expanded');
+        
+        if (!isExpanded) {
+            // 展開されていない場合はまず展開する
+            element.classList.add('expanded');
+        } else {
+            // すでに展開されている場合はコピーして閉じる
+            copyClip(clip, element);
+            element.classList.remove('expanded');
+        }
     }
 
     function addClip() {
@@ -311,7 +334,7 @@
             element.classList.add('copied-flash');
             setTimeout(() => {
                 element.classList.remove('copied-flash');
-            }, 200);
+            }, 250);
         } catch (err) {
             console.error('Failed to copy');
         }
