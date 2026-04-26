@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Quick Clip</title>
     
-    <link rel="icon" href="image_33.png">
-    <link rel="apple-touch-icon" href="image_33.png">
+    <link rel="icon" href="image_14.png">
+    <link rel="apple-touch-icon" href="image_14.png">
 
     <style>
         :root {
@@ -17,16 +17,8 @@
             --radius: 15px;
         }
 
-        /* 憲法: 15px角丸 / iOS対策 / 全域選択禁止 */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; padding: 0; 
-            -webkit-user-select: none; 
-            user-select: none; 
-        }
-
-        /* 入力欄のみテキスト操作許可 */
+        /* 憲法遵守: 角丸15px / iOS Safari対策 / 全域選択禁止 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
         textarea { -webkit-user-select: text; user-select: text; }
 
         body {
@@ -73,35 +65,17 @@
             padding: 18px;
             border-radius: var(--radius);
             border: 2px solid var(--accent);
-        }
-
-        .label {
-            font-size: 0.75rem;
-            font-weight: 900;
-            color: #666;
-            margin-bottom: 10px;
-            display: block;
-            text-transform: uppercase;
+            position: relative;
         }
 
         .input-wrapper { position: relative; }
 
         textarea {
-            width: 100%;
-            height: 80px;
-            padding: 15px;
-            padding-right: 45px;
-            border: 2px solid var(--accent);
-            border-radius: var(--radius);
-            background: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--main) !important;
-            outline: none;
-            resize: none;
-            -webkit-appearance: none;
-            -webkit-text-fill-color: var(--main) !important;
-            opacity: 1 !important;
+            width: 100%; height: 200px; padding: 15px; padding-right: 40px;
+            border: 2px solid var(--accent); border-radius: var(--radius);
+            background: #fff; font-size: 1rem; font-weight: 600;
+            color: var(--main) !important; outline: none; resize: none;
+            -webkit-appearance: none; -webkit-text-fill-color: var(--main) !important; opacity: 1 !important;
         }
         textarea::placeholder { color: #bbb !important; -webkit-text-fill-color: #bbb !important; opacity: 1 !important; }
 
@@ -113,103 +87,11 @@
         }
 
         .action-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--main);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            -webkit-text-fill-color: #fff;
+            width: 100%; padding: 18px; background: var(--main); color: #fff;
+            border: none; border-radius: var(--radius); font-size: 1rem;
+            font-weight: 800; cursor: pointer; -webkit-text-fill-color: #fff;
         }
         .action-btn:active { transform: scale(0.98); }
-
-        .warning-text {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #aaa;
-            text-align: center;
-            line-height: 1.4;
-            margin-top: -5px;
-        }
-
-        #clip-list { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            max-height: 380px; 
-            overflow-y: auto; 
-            padding-right: 5px;
-            scrollbar-width: none;
-        }
-        #clip-list::-webkit-scrollbar { display: none; }
-        
-        .clip-item {
-            display: flex;
-            align-items: flex-start;
-            background: var(--input-bg);
-            border: 2px solid var(--accent);
-            border-radius: var(--radius);
-            padding: 5px;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            position: relative;
-        }
-        
-        .clip-item.copied-flash { 
-            background: var(--main) !important; 
-            border-color: var(--main);
-        }
-        .clip-item.copied-flash .clip-text { color: #fff; }
-        .clip-item.copied-flash .delete-btn { color: #fff; opacity: 0.5; }
-        
-        .clip-text {
-            flex: 1;
-            padding: 12px 15px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            word-break: break-all;
-        }
-
-        .clip-item.expanded .clip-text {
-            -webkit-line-clamp: unset;
-            display: block;
-        }
-
-        .delete-btn {
-            width: 44px;
-            height: 44px;
-            background: transparent;
-            color: #ccc;
-            border: none;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .export-btn {
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            color: #999;
-            border: 1px dashed #ccc;
-            border-radius: var(--radius);
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 5px;
-        }
 
         .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
         .kofi-btn {
@@ -225,7 +107,7 @@
         footer { text-align: center; font-size: 0.75rem; color: #999; line-height: 1.6; font-weight: 700; margin-top: 15px; }
         footer a { color: inherit; text-decoration: underline; }
 
-        #modal {
+        #homeModal {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
             align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
         }
@@ -233,7 +115,7 @@
             background: #fff; width: 90%; max-width: 340px; padding: 35px;
             border-radius: var(--radius); text-align: left; position: relative;
         }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #ccc; cursor: pointer; font-weight: bold; }
+        .modal-close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #ccc; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -243,36 +125,31 @@
         <h1>Quick Clip</h1>
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
-    <p class="subtitle">Tap: Copy / Long: Expand</p>
+    <p class="subtitle">Instant clipboard history and text snippet manager.</p>
 
     <div class="input-card">
-        <label class="label">New Snippet</label>
         <div class="input-wrapper">
-            <textarea id="clipInput" placeholder="Enter text to save..." oninput="toggleClr()"></textarea>
+            <textarea id="input" placeholder="Type or paste text here to save..." oninput="toggleClr()"></textarea>
             <button class="clr-btn" id="clrBtn" onclick="clearInput()">×</button>
         </div>
     </div>
-
-    <button class="action-btn" onclick="addClip()">Save Snippet</button>
-    <div class="warning-text">Data saved locally in your browser.<br>Be careful with Incognito mode.</div>
-
-    <div id="clip-list"></div>
-    <button id="exportBtn" class="export-btn" onclick="exportAll()" style="display:none;">📥 Copy All Clips (Backup)</button>
+    
+    <button id="main-btn" class="action-btn" onclick="copyText()">COPY TO CLIPBOARD</button>
 
     <div class="footer-btns">
-        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️ buy me a coffee</a>
+        <a id="kofi-link" href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️ buy me a coffee</a>
         <button class="home-btn" onclick="showModal()">Add to Home Screen</button>
     </div>
 
     <footer>
-        No login / No tracking / No ads / Browser only<br>
-        <a href="https://afrorakda.com/privacy/">Privacy Policy</a> / afrorakda © 2026
+        <span id="footer-text">No login / No tracking / No ads / Browser only</span><br>
+        <a id="privacy-link" href="https://afrorakda.com/privacy/">Privacy Policy</a> / <span id="copyright">afrorakda © 2026</span>
     </footer>
 </div>
 
-<div id="modal" onclick="hideModal()">
+<div id="homeModal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <span class="close-x" onclick="hideModal()">×</span>
+        <span class="modal-close-x" onclick="closeModal()">×</span>
         <h3 style="margin-bottom: 15px; font-weight: 900;">📱 Install</h3>
         <p style="font-size: 0.9rem; line-height: 1.6; font-weight: 700;">
             🍏 <strong>iPhone:</strong><br>Share > Add to Home Screen<br><br>
@@ -282,105 +159,48 @@
 </div>
 
 <script>
-    const clipInput = document.getElementById('clipInput');
-    const clrBtn = document.getElementById('clrBtn');
-    const exportBtn = document.getElementById('exportBtn');
-    let clips = JSON.parse(localStorage.getItem('fridge_clips') || '[]');
-    let longPressTimer;
-
     function toggleClr() {
-        clrBtn.style.display = clipInput.value.length > 0 ? 'flex' : 'none';
+        const val = document.getElementById('input').value;
+        document.getElementById('clrBtn').style.display = val.length > 0 ? 'flex' : 'none';
     }
 
     function clearInput() {
-        clipInput.value = '';
+        document.getElementById('input').value = "";
         toggleClr();
-        clipInput.focus();
+        document.getElementById('input').focus();
     }
 
-    function renderClips() {
-        const list = document.getElementById('clip-list');
-        list.innerHTML = '';
-        exportBtn.style.display = clips.length > 0 ? 'block' : 'none';
+    function copyText() {
+        const input = document.getElementById('input');
+        const btn = document.getElementById('main-btn');
+        if(!input.value) return;
 
-        clips.forEach((clip, index) => {
-            const div = document.createElement('div');
-            div.className = 'clip-item';
-            
-            // 1タップコピー
-            div.addEventListener('click', () => {
-                copyClip(clip, div);
-            });
-
-            // 長押し（全展開）
-            div.addEventListener('touchstart', () => {
-                longPressTimer = setTimeout(() => {
-                    div.classList.toggle('expanded');
-                    div.click_suppressed = true; 
-                    if (navigator.vibrate) navigator.vibrate(10);
-                }, 350);
-            }, {passive: true});
-
-            div.addEventListener('touchend', () => {
-                clearTimeout(longPressTimer);
-            });
-
-            div.innerHTML = `
-                <div class="clip-text">${clip}</div>
-                <button class="delete-btn" onclick="event.stopPropagation(); deleteClip(${index})">×</button>
-            `;
-            list.appendChild(div);
+        navigator.clipboard.writeText(input.value).then(() => {
+            btn.innerText = "COPIED!";
+            btn.style.backgroundColor = "#4caf50";
+            setTimeout(() => {
+                btn.innerText = "COPY TO CLIPBOARD";
+                btn.style.backgroundColor = "var(--main)";
+            }, 1500);
         });
     }
 
-    function addClip() {
-        const text = clipInput.value.trim();
-        if (text) {
-            clips.unshift(text);
-            localStorage.setItem('fridge_clips', JSON.stringify(clips));
-            clipInput.value = '';
-            toggleClr();
-            renderClips();
-        }
-    }
+    function showModal() { document.getElementById('homeModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('homeModal').style.display = 'none'; }
 
-    function deleteClip(index) {
-        clips.splice(index, 1);
-        localStorage.setItem('fridge_clips', JSON.stringify(clips));
-        renderClips();
-    }
-
-    async function copyClip(text, element) {
-        if (element.click_suppressed) {
-            element.click_suppressed = false;
-            return;
-        }
+    async function loadFooter() {
         try {
-            await navigator.clipboard.writeText(text);
-            element.classList.add('copied-flash');
-            setTimeout(() => {
-                element.classList.remove('copied-flash');
-            }, 150);
-        } catch (err) {
-            console.error('Failed to copy');
-        }
+            const response = await fetch('footer.json');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.footerText) document.getElementById('footer-text').innerText = data.footerText;
+                if (data.privacyLink) document.getElementById('privacy-link').href = data.privacyLink;
+                if (data.copyright) document.getElementById('copyright').innerText = data.copyright;
+                if (data.kofiText) document.getElementById('kofi-link').innerText = data.kofiText;
+            }
+        } catch (e) { console.log("Using internal footer logic."); }
     }
-
-    async function exportAll() {
-        if (clips.length === 0) return;
-        const allText = clips.join('\n---\n');
-        try {
-            await navigator.clipboard.writeText(allText);
-            const original = exportBtn.innerText;
-            exportBtn.innerText = '✅ All Clips Copied!';
-            setTimeout(() => { exportBtn.innerText = original; }, 1500);
-        } catch (err) { console.error(err); }
-    }
-
-    function showModal() { document.getElementById('modal').style.display = 'flex'; }
-    function hideModal() { document.getElementById('modal').style.display = 'none'; }
-
-    renderClips();
+    loadFooter();
 </script>
 
 </body>
