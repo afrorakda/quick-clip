@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Quick Clip</title>
+    <title>Quick Clip (Rescue Mode)</title>
     
     <link rel="icon" href="image_33.png">
     <link rel="apple-touch-icon" href="image_33.png">
@@ -16,17 +16,7 @@
             --input-bg: #fafafa;
             --radius: 15px;
         }
-
-        /* 憲法: 15px角丸 / iOS対策 / 全域選択禁止 */
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; padding: 0; 
-            -webkit-user-select: none; 
-            user-select: none; 
-        }
-
-        /* 入力欄のみテキスト操作許可 */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
         textarea { -webkit-user-select: text; user-select: text; }
 
         body {
@@ -40,200 +30,36 @@
             padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px) 20px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .container { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 15px; }
+        header { display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1.5px; }
 
         .hub-link {
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: var(--main);
-            background: var(--accent);
-            padding: 8px 14px;
-            border-radius: var(--radius);
+            text-decoration: none; font-size: 0.8rem; font-weight: 800; color: var(--main);
+            background: var(--accent); padding: 8px 14px; border-radius: var(--radius);
         }
 
-        .subtitle { font-size: 0.9rem; color: #666; font-weight: 700; text-align: left; }
-
-        .input-card {
-            background: var(--input-bg);
-            padding: 18px;
-            border-radius: var(--radius);
-            border: 2px solid var(--accent);
-        }
-
-        .label {
-            font-size: 0.75rem;
-            font-weight: 900;
-            color: #666;
-            margin-bottom: 10px;
-            display: block;
-            text-transform: uppercase;
-        }
-
+        .input-card { background: var(--input-bg); padding: 18px; border-radius: var(--radius); border: 2px solid var(--accent); }
+        .label { font-size: 0.75rem; font-weight: 900; color: #666; margin-bottom: 10px; display: block; text-transform: uppercase; }
         .input-wrapper { position: relative; }
 
         textarea {
-            width: 100%;
-            height: 80px;
-            padding: 15px;
-            padding-right: 45px;
-            border: 2px solid var(--accent);
-            border-radius: var(--radius);
-            background: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--main) !important;
-            outline: none;
-            resize: none;
-            -webkit-appearance: none;
-            -webkit-text-fill-color: var(--main) !important;
-            opacity: 1 !important;
-        }
-        textarea::placeholder { color: #bbb !important; -webkit-text-fill-color: #bbb !important; opacity: 1 !important; }
-
-        .clr-btn {
-            position: absolute; top: 10px; right: 10px; width: 28px; height: 28px;
-            background: #ccc; color: #fff; border-radius: 50%;
-            display: none; align-items: center; justify-content: center;
-            cursor: pointer; border: none; font-size: 16px; font-weight: bold; z-index: 5;
+            width: 100%; height: 80px; padding: 15px; border: 2px solid var(--accent); border-radius: var(--radius);
+            background: #fff; font-size: 1rem; font-weight: 600; color: var(--main) !important;
+            outline: none; resize: none; -webkit-appearance: none; -webkit-text-fill-color: var(--main) !important; opacity: 1 !important;
         }
 
-        .action-btn {
-            width: 100%;
-            padding: 18px;
-            background: var(--main);
-            color: #fff;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 800;
-            cursor: pointer;
-            -webkit-text-fill-color: #fff;
-        }
-        .action-btn:active { transform: scale(0.98); }
+        .action-btn { width: 100%; padding: 18px; background: var(--main); color: #fff; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 800; cursor: pointer; }
 
-        .warning-text {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #aaa;
-            text-align: center;
-            line-height: 1.4;
-            margin-top: -5px;
-        }
+        #clip-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .clip-item { display: flex; background: var(--input-bg); border: 2px solid var(--accent); border-radius: var(--radius); padding: 15px; font-weight: 700; cursor: pointer; position: relative;}
+        .delete-btn { position: absolute; right: 10px; top: 10px; color: #ccc; font-weight: 800; border:none; background:none; font-size: 20px; }
 
-        #clip-list { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            max-height: 380px; 
-            overflow-y: auto; 
-            padding-right: 5px;
-            scrollbar-width: none;
-        }
-        #clip-list::-webkit-scrollbar { display: none; }
-        
-        .clip-item {
-            display: flex;
-            align-items: flex-start;
-            background: var(--input-bg);
-            border: 2px solid var(--accent);
-            border-radius: var(--radius);
-            padding: 5px;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            position: relative;
-        }
-        
-        .clip-item.copied-flash { 
-            background: var(--main) !important; 
-            border-color: var(--main);
-        }
-        .clip-item.copied-flash .clip-text { color: #fff; }
-        .clip-item.copied-flash .delete-btn { color: #fff; opacity: 0.5; }
-        
-        .clip-text {
-            flex: 1;
-            padding: 12px 15px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            word-break: break-all;
-        }
+        footer { text-align: center; font-size: 0.75rem; color: #999; margin-top: 15px; font-weight: 700; }
+        footer a { color: inherit; }
 
-        .clip-item.expanded .clip-text {
-            -webkit-line-clamp: unset;
-            display: block;
-        }
-
-        .delete-btn {
-            width: 44px;
-            height: 44px;
-            background: transparent;
-            color: #ccc;
-            border: none;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .export-btn {
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            color: #999;
-            border: 1px dashed #ccc;
-            border-radius: var(--radius);
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-
-        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
-        .kofi-btn {
-            background: var(--main); color: #fff; text-decoration: none;
-            padding: 16px; border-radius: var(--radius); text-align: center;
-            font-weight: 900; font-size: 0.9rem; -webkit-text-fill-color: #fff;
-        }
-        .home-btn {
-            background: var(--accent); color: var(--main); border: none;
-            padding: 12px; border-radius: var(--radius); font-weight: 800; font-size: 0.8rem; cursor: pointer;
-        }
-
-        footer { text-align: center; font-size: 0.75rem; color: #999; line-height: 1.6; font-weight: 700; margin-top: 15px; }
-        footer a { color: inherit; text-decoration: underline; }
-
-        #modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background: #fff; width: 90%; max-width: 340px; padding: 35px;
-            border-radius: var(--radius); text-align: left; position: relative;
-        }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #ccc; cursor: pointer; font-weight: bold; }
+        /* 復旧通知用 */
+        #rescue-alert { display: none; background: #333; color: #fff; padding: 15px; border-radius: var(--radius); font-size: 0.8rem; font-weight: 800; text-align: center; }
     </style>
 </head>
 <body>
@@ -243,25 +69,22 @@
         <h1>Quick Clip</h1>
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
-    <p class="subtitle">Tap: Copy / Long: Expand</p>
+
+    <div id="rescue-alert">🚨 Old data has been rescued!</div>
 
     <div class="input-card">
         <label class="label">New Snippet</label>
         <div class="input-wrapper">
-            <textarea id="clipInput" placeholder="Enter text to save..." oninput="toggleClr()"></textarea>
-            <button class="clr-btn" id="clrBtn" onclick="clearInput()">×</button>
+            <textarea id="clipInput" placeholder="Enter text to save..."></textarea>
         </div>
     </div>
 
     <button class="action-btn" onclick="addClip()">Save Snippet</button>
-    <div class="warning-text">Data saved locally in your browser.<br>Be careful with Incognito mode.</div>
 
     <div id="clip-list"></div>
-    <button id="exportBtn" class="export-btn" onclick="exportAll()" style="display:none;">📥 Copy All Clips (Backup)</button>
 
-    <div class="footer-btns">
-        <a id="kofi-link" href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️ buy me a coffee</a>
-        <button class="home-btn" onclick="showModal()">Add to Home Screen</button>
+    <div class="footer-btns" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+        <a id="kofi-link" href="https://ko-fi.com/afrorakda" target="_blank" style="background: var(--main); color: #fff; text-decoration: none; padding: 16px; border-radius: var(--radius); text-align: center; font-weight: 900; font-size: 0.9rem;">☕️ buy me a coffee</a>
     </div>
 
     <footer>
@@ -270,117 +93,67 @@
     </footer>
 </div>
 
-<div id="modal" onclick="hideModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <span class="close-x" onclick="hideModal()">×</span>
-        <h3 id="modal-title" style="margin-bottom: 15px; font-weight: 900;">📱 Install</h3>
-        <p id="modal-body" style="font-size: 0.9rem; line-height: 1.6; font-weight: 700;">
-            🍏 <strong>iPhone:</strong><br>Share > Add to Home Screen<br><br>
-            🤖 <strong>Android:</strong><br>Menu (⋮) > Add to Home Screen
-        </p>
-    </div>
-</div>
-
 <script>
-    const clipInput = document.getElementById('clipInput');
-    const clrBtn = document.getElementById('clrBtn');
-    const exportBtn = document.getElementById('exportBtn');
-    let clips = JSON.parse(localStorage.getItem('fridge_clips') || '[]');
-    let longPressTimer;
+    const STORAGE_KEY = 'fridge_clips';
+    let clips = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
-    function toggleClr() {
-        clrBtn.style.display = clipInput.value.length > 0 ? 'flex' : 'none';
+    // --- 救出ロジック開始 ---
+    function rescueData() {
+        let rescued = false;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            // 現在のキー以外で、クリップボードデータらしきものを探す
+            if (key !== STORAGE_KEY && (key.includes('clip') || key.includes('fridge'))) {
+                try {
+                    const oldData = JSON.parse(localStorage.getItem(key));
+                    if (Array.isArray(oldData)) {
+                        clips = [...new Set([...clips, ...oldData])]; // 重複排除して統合
+                        rescued = true;
+                    }
+                } catch(e) {}
+            }
+        }
+        if (rescued) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(clips));
+            document.getElementById('rescue-alert').style.display = 'block';
+        }
     }
-
-    function clearInput() {
-        clipInput.value = '';
-        toggleClr();
-        clipInput.focus();
-    }
+    // --- 救出ロジック終了 ---
 
     function renderClips() {
         const list = document.getElementById('clip-list');
         list.innerHTML = '';
-        exportBtn.style.display = clips.length > 0 ? 'block' : 'none';
-
         clips.forEach((clip, index) => {
             const div = document.createElement('div');
             div.className = 'clip-item';
-            
-            // 1タップコピー
-            div.addEventListener('click', () => {
-                copyClip(clip, div);
-            });
-
-            // 長押し（全展開）
-            div.addEventListener('touchstart', () => {
-                longPressTimer = setTimeout(() => {
-                    div.classList.toggle('expanded');
-                    div.click_suppressed = true; 
-                    if (navigator.vibrate) navigator.vibrate(10);
-                }, 350);
-            }, {passive: true});
-
-            div.addEventListener('touchend', () => {
-                clearTimeout(longPressTimer);
-            });
-
-            div.innerHTML = `
-                <div class="clip-text">${clip}</div>
-                <button class="delete-btn" onclick="event.stopPropagation(); deleteClip(${index})">×</button>
-            `;
+            div.innerHTML = `<span>${clip}</span><button class="delete-btn" onclick="deleteClip(${index})">×</button>`;
+            div.onclick = () => {
+                navigator.clipboard.writeText(clip);
+                div.style.background = '#333';
+                div.style.color = '#fff';
+                setTimeout(() => { div.style.background = ''; div.style.color = ''; }, 150);
+            };
             list.appendChild(div);
         });
     }
 
     function addClip() {
-        const text = clipInput.value.trim();
+        const text = document.getElementById('clipInput').value.trim();
         if (text) {
             clips.unshift(text);
-            localStorage.setItem('fridge_clips', JSON.stringify(clips));
-            clipInput.value = '';
-            toggleClr();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(clips));
+            document.getElementById('clipInput').value = '';
             renderClips();
         }
     }
 
     function deleteClip(index) {
+        event.stopPropagation();
         clips.splice(index, 1);
-        localStorage.setItem('fridge_clips', JSON.stringify(clips));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clips));
         renderClips();
     }
 
-    async function copyClip(text, element) {
-        if (element.click_suppressed) {
-            element.click_suppressed = false;
-            return;
-        }
-        try {
-            await navigator.clipboard.writeText(text);
-            element.classList.add('copied-flash');
-            setTimeout(() => {
-                element.classList.remove('copied-flash');
-            }, 150);
-        } catch (err) {
-            console.error('Failed to copy');
-        }
-    }
-
-    async function exportAll() {
-        if (clips.length === 0) return;
-        const allText = clips.join('\n---\n');
-        try {
-            await navigator.clipboard.writeText(allText);
-            const original = exportBtn.innerText;
-            exportBtn.innerText = '✅ All Clips Copied!';
-            setTimeout(() => { exportBtn.innerText = original; }, 1500);
-        } catch (err) { console.error(err); }
-    }
-
-    function showModal() { document.getElementById('modal').style.display = 'flex'; }
-    function hideModal() { document.getElementById('modal').style.display = 'none'; }
-
-    // 鉄壁ロジック: 削除厳禁
     async function loadFooter() {
         try {
             const response = await fetch('footer.json');
@@ -390,12 +163,11 @@
                 if (data.privacyLink) document.getElementById('privacy-link').href = data.privacyLink;
                 if (data.copyright) document.getElementById('copyright').innerText = data.copyright;
                 if (data.kofiText) document.getElementById('kofi-link').innerText = data.kofiText;
-                if (data.modalTitle) document.getElementById('modal-title').innerText = data.modalTitle;
-                if (data.modalBody) document.getElementById('modal-body').innerHTML = data.modalBody;
             }
-        } catch (e) { console.log("Static footer active."); }
+        } catch (e) {}
     }
 
+    rescueData();
     renderClips();
     loadFooter();
 </script>
